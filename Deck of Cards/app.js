@@ -36,3 +36,26 @@ shuffleDeck();
 //Once you have both cards, console.log the values and suits of both cards.
 
 //Build an HTML page that lets you draw cards from a deck. When the page loads, go to the Deck of Cards API to create a new deck, and show a button on the page that will let you draw a card. Every time you click the button, display a new card, until there are no cards left in the deck.
+
+const $btn = $('button');
+const $cardSection = $('section');
+
+$(document).ready(async function() {
+    let deck = await axios.get(`${baseURL}/deck/new/shuffle/`);
+    deckID= deck.data.deck_id;
+    $btn.show();
+    console.log(deckID)
+});
+
+$btn.on('click', async function() {
+    
+    let card = await axios.get(`${baseURL}/deck/${deckID}/draw/?count=1`);
+    console.log(card.data)
+    let $cardImg = card.data.cards[0].image;
+    $cardSection.append($('<img>', {
+        src: $cardImg,
+    }));
+    if (card.data.remaining === 0) {
+        $btn.hide();
+    }
+});
